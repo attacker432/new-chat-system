@@ -1289,6 +1289,100 @@ const mutePlayer = (socket, clients, args, playerId) =>{
         util.error(error);
     }
 };
+// ===============================================
+// mute  [player id]
+// ===============================================
+const permamutePlayer = (socket, clients, args, playerId) =>{
+    try {
+          if (socket.player != null && args.length === 1) {
+        let isMember = isUsermoderator(socket.role);
+
+        if (!isMember){
+            util.log('[Unauthorized] permaMute command. ' + socket.player.name);
+            socket.player.body.sendMessage('Unauthorized.', errorMessageColor);
+            return 1;
+        }
+
+        // Check mute command usage count.
+        const usageCount = muteCommandUsageCountLookup[socket.password];
+
+        if (usageCount){
+            if (usageCount >= 10){
+                socket.player.body.sendMessage('Mute usage limit reached.', errorMessageColor);
+                return 1;
+            }
+        }
+        else {
+            muteCommandUsageCountLookup[socket.password] = 1;
+        }
+
+        let clients = sockets.getClients();
+
+        if (clients){
+            const now = util.time();
+
+            for (let i = 0; i < clients.length; ++i){
+                let client = clients[i];
+
+                if (client.player.viewId === playerId){
+                    // Check if muter is trying to mute the player whose role is higher.
+                    // ========================================================================
+                    let muterRoleValue = userAccountRoleValues[socket.role];
+                    let muteeRoleValue = userAccountRoleValues[client.role];
+                    if (muterRoleValue <= muteeRoleValue){
+                        socket.player.body.sendMessage('Unable to mute player with same or higher role.', errorMessageColor);
+                        return 1;
+                    }
+                    // ========================================================================
+
+                    // very long to permanent mute a playeror until /unmute
+                    const duration = 1000 * 60 * 60 * 60;
+                    const mutedUntil = now + duration;
+
+                    const playerInfo = mutedPlayers.find(p => p.ipAddress === client.ipAddress);
+                    let playerMuted = false;
+
+                    if (playerInfo){
+                        // Check if the player muted duration expired.
+                        if (now > playerInfo.mutedUntil){
+                            playerInfo.muterName = socket.player.name;
+                            playerInfo.mutedUntil = mutedUntil;
+                            playerMuted = true;
+                        }
+                        else {
+                            socket.player.body.sendMessage('Player already muted.', errorMessageColor);
+                        }
+                    }
+                    else {
+                        mutedPlayers.push({
+                            ipAddress: client.ipAddress,
+                            muterName: socket.player.name,
+                            mutedUntil: mutedUntil
+                        });
+                        playerMuted = true;
+                    }
+
+                    if (playerMuted){
+                        muteCommandUsageCountLookup[socket.password] += 1;
+
+                        socket.player.body.sendMessage('Player muted.', notificationMessageColor);
+                        client.player.body.sendMessage('You have been temporarily muted by ' + socket.player.name, errorMessageColor);
+                        sockets.broadcast(socket.player.name + ' muted ' + client.player.name);
+
+                        util.log('*** ' + socket.player.name + ' muted ' +
+                            client.player.name + ' [' + client.ipAddress + '] ***');
+                    }
+
+                    break;
+                }
+            }
+        }
+        } else {/*socket.player.body.sendMessage('usage: /mute [id]') */}
+    } catch (error){
+        util.error('[permamutePlayer()]');
+        util.error(error);
+    }
+};
 
 // ===============================================
 // unmute  [player id]
@@ -1470,6 +1564,9 @@ const chatCommandDelegates = {
     },
     '/mute': (socket, clients, args, playerId) => {
         mutePlayer(socket, clients, args, playerId);
+    },
+   '/permamute': (socket, clients, args, playerId) => {
+        permamutePlayer(socket, clients, args, playerId);
     },
     '/unmute': (socket, clients, args, playerId) => {
         unmutePlayer(socket, clients, args, playerId);
