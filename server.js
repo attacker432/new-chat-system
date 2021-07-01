@@ -2180,13 +2180,13 @@ class io_nearestDifferentMaster extends IO {
     out = out
       .map(e => {
         // Only look at those within range and arc (more expensive, so we only do it on the few)
-        let yaboi = false;
+        let danger2 = false;
         if (
           Math.pow(this.body.x - e.x, 2) + Math.pow(this.body.y - e.y, 2) <
           sqrRange
         ) {
           if (this.body.firingArc == null || this.body.aiSettings.view360) {
-            yaboi = true;
+       //     danger2 = true;
           } else if (
             Math.abs(
               util.angleDifference(
@@ -2195,12 +2195,15 @@ class io_nearestDifferentMaster extends IO {
               )
             ) < this.body.firingArc[1]
           )
-            yaboi = true;
+          danger2 = true;
         }
-        if (yaboi) {
-          mostDangerous = Math.max(e.dangerValue, mostDangerous);
-          return e;
-        }
+                if (danger2) {
+                // if (danger == true){
+            mostDangerous = Math.max(e.dangerValue, mostDangerous)
+            return true
+              //  }
+                 }
+                 
       })
       .filter(e => {
         // Only return the highest tier of danger
@@ -3478,34 +3481,50 @@ class HealthType {
     }
   }
 
-  regenerate(boost = false) {
-    boost /= 2;
-    let cons = 5;
-    switch (this.type) {
-      case "static":
-        if (this.amount >= this.max || !this.amount) break;
-        this.amount += cons * (this.max / 10 / 60 / 2.5 + boost);
-        break;
-      case "dynamic":
-        let r = util.clamp(this.amount / this.max, 0, 1);
-        if (!r) {
-          this.amount = 0.0001;
+    regenerate(boost = false) {
+        boost /= 5;
+        let cons = 1;
+        if (regen == true) {
+        switch (this.type) {
+        case 'static':
+            if (this.amount >= this.max || !this.amount) break;
+            this.amount += cons * (this.max / 10 / 60 / 2.5 + boost);
+            break;
+        case 'dynamic':
+            let r = util.clamp(this.amount / this.max, 0, 1);
+            if (!r) {
+                this.amount = 0.0001;
+            }
+            if (r === 1) {
+                this.amount = this.max;
+            } else {
+                this.amount += cons * (this.regen * Math.exp(-50 * Math.pow(Math.sqrt(0.5 * r) - 0.4, 2)) / 3 + r * this.max / 10 / 15 + boost);
+            }
+        break; 
         }
-        if (r === 1) {
-          this.amount = this.max;
-        } else {
-          this.amount +=
-            cons *
-            ((this.regen *
-              Math.exp(-50 * Math.pow(Math.sqrt(0.5 * r) - 0.4, 2))) /
-              3 +
-              (r * this.max) / 10 / 15 +
-              boost);
+        this.amount = util.clamp(this.amount, 0, this.max);
+      } else {
+        boost /= 5;
+        let cons = 0;
+        switch (this.type) {
+        case 'static':
+            if (this.amount >= this.max || !this.amount) break;
+            this.amount += cons * (this.max / 10 / 60 / 2.5 + boost);
+            break;
+        case 'dynamic':
+            let r = util.clamp(this.amount / this.max, 0, 1);
+            if (!r) {
+                this.amount = 9;
+            }
+            if (r === 1) {
+                this.amount = this.max;
+            } else {
+                this.amount += cons * (this.regen * Math.exp(-50 * Math.pow(Math.sqrt(0.5 * r) - 0.4, 2)) / 3 + r * this.max / 10 / 15 + boost);
+            }
+        break; 
         }
-        break;
+        this.amount = util.clamp(this.amount, 0, this.max);}
     }
-    this.amount = util.clamp(this.amount, 0, this.max);
-  }
 
   get permeability() {
     switch (this.type) {
