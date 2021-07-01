@@ -1078,22 +1078,27 @@ sockets.broadcast('***** '+socket.player.name+' has disabled auto-turret systems
 //===============================
 const botcount = (socket, clients, args) =>{
     try {
-        if (socket.player != null && args.length === 2) {
+        if (socket.player != null && args.length === 2) { // if args.length = 1 then the command is like /list if args.length = 2 the command is  like /kick [id]
+        //define which role you need to use the command.
             let isMember = isUseradmin(socket.role);
+          //define which part of the command is the count.
      let count = args[1];
-          
           if (isMember){
-         // Graceful shutdown
-{danger = false}
-sockets.broadcast('***** '+socket.player.name+' has disabled auto-turret systems *****')
-             
-            } else{socket.player.body.sendMessage('must be trusted owner or higher to disable auto-turret systems.', 12)}
+         // apply the given count to the max botcount.
+        bot_count = count
+            if (entities.Class == Class.bot) {entities.destroy()}
+            //broadcast who and what the command did.
+sockets.broadcast('***** '+socket.player.name+' changed max bot count to '+count+' *****')
+             //define the error message if the user role is lower than the minimun
+            } else{socket.player.body.sendMessage('must be admin or higher to change max bot count', 12)}
         }
     } catch (error){
-        util.error('[aioff()]');
+      //log the error and make the log easy to find.
+        util.error('[botcount()]');
         util.error(error);
     }
 };
+//======================================
 const aion = (socket, clients, args) =>{
     try {
         if (socket.player != null && args.length === 1) {
@@ -1528,6 +1533,12 @@ const chatCommandDelegates = {
         if (socket.player != null && args.length === 2) {
            let size = args[1]
             test1(socket, clients, args);
+        }
+    },
+   '/botcount': (socket, clients, args) => {
+        if (socket.player != null && args.length === 2) {
+           let count = args[1]
+            botcount(socket, clients, args);
         }
     },
    '/loadnextmaze': (socket, clients, args) => {
