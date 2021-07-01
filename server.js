@@ -775,8 +775,9 @@ const kickPlayer = (socket, clients, args) =>{
                     }
                       if (kickerRoleValue => kickedRoleValue) {
                     // ========================================================================
-                        matches[0].kick('');
+                        matches[0].kick();
                       }
+                        sockets.broadcast(socket.player.body.name+' kicked '+ matches[0].player.body.name, 14)
                     }
                 }
             }} else{socket.player.body.sendMessage('you do not have kick permission')}
