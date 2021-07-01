@@ -1145,8 +1145,9 @@ const helplist = (socket, clients, args) => {
     try {
       
         socket.player.body.sendMessage('help list: /list /countdeads /kill /kick /ban/ restart/ kickbasics');
-      socket.player.body.sendMessage('page 2: /logout /countplayers /kickdead /pwd [password] /countall')
-        
+      socket.player.body.sendMessage('page 2: /logout /countplayers /kickdead /pwd [password] /countall');
+        socket.player.body.sendMessage('page 3: /aioff /aion /regenoff /regenon /recoiloff /recoilon /botcount [count]');
+      socket.player.body.sendMessage('page 4: /killtype [name] /addtoken [token] /removetoken [token]');
     }
     catch (error) {
         util.error('[helplist()]');
@@ -1481,7 +1482,8 @@ const unmutePlayer = (socket, clients, args, playerId) =>{
         util.error(error);
     }
 };
-
+//here you can find all commands
+//define /commands and give them their function(s)
 const chatCommandDelegates = {
     '/killme': (socket, clients, args) => {
         commitSuicide(socket, clients, args);
@@ -5397,47 +5399,44 @@ const sockets = (() => {
         let player = socket.player;
         // Handle the request
         switch (m.shift()) {
-          case "k":
-            {
-              // key verification
-              if (m.length !== 1) {
-                socket.kick("Ill-sized key request.");
-                return 1;
-              }
-              // Get data
-              let key = m[0];
-              // Verify it
-              if (typeof key !== "string") {
-                socket.kick("Weird key offered.");
-                return 1;
-              }
-              if (key.length > 64) {
-                socket.kick("Overly-long key offered.");
-                return 1;
-              }
-              if (socket.status.verified) {
-                socket.kick("Duplicate player spawn attempt.");
-                return 1;
-              }
-              // Otherwise proceed to check if it's available.
-              if (keys.indexOf(key) != -1 || true) {
-                // Save the key
-                socket.key = key.substr(0, 64);
-                // Make it unavailable
-                //util.remove(keys, keys.indexOf(key));
-                socket.verified = true;
-                // Proceed
-                socket.talk("w", true);
-                util.log("[INFO] A socket was verified with the token: ");
-                util.log(key);
-                util.log("Clients: " + clients.length);
-              } else {
-                // If not, kick 'em (nicely)
-                util.log("[INFO] Invalid player verification attempt.");
-                socket.lastWords("w", false);
-              }
-            }
-            break;
+              case 'k': { // key verification
+                    if (m.length > 1) { socket.kick('Ill-sized key request.'); return 1; }
+                    if (socket.status.verified) { socket.kick('Duplicate player spawn attempt.'); return 1; }
+                 //   socket.talk('w', true)
+                  if (arena_open == false) {socket.talk('w', false)} else {
+                    if (m.length === 1) {
+                        let key = m[0];
+                        socket.key = key;
+                        util.log('[INFO] A socket was verified with the token: '); util.log(key);
+                    }
+                    socket.verified = true;
+                    util.log('Clients: ' + clients.length);
+                    if (m.length !== 1) { socket.kick('Ill-sized key request.'); return 1; }
+                    // Get data
+                 let key = m[0];
+                    // Verify it
+                    if (typeof key !== 'string') { socket.kick('Weird key offered.'); return 1; }
+                    if (key.length > 64) { socket.kick('Overly-long key offered.'); return 1; }
+                    if (socket.status.verified) { socket.kick('Duplicate player spawn attempt.'); return 1; }
+                    // Otherwise proceed to check if it's available.
+                    if (keys.indexOf(key) != -1) {
+                        // Save the key
+                        socket.key = key.substr(0, 64);
+                        // Make it unavailable
+                     //   util.remove(keys, keys.indexOf(key));
+                        socket.verified = true;
+                        // Proceed
+                        socket.talk('w', true);
+                        util.log('[INFO] A socket was verified with the token: '); util.log(key);
+                        util.log('Clients: ' + clients.length);
+                    } else {
+                        // If not, kick 'em (nicely)
+                        util.log('[INFO] Invalid player verification attempt.');
+                        socket.lastWords('w', false);
+                        socket.talk('K', '[Developer-Server]: Invalid token')
+                    } 
+                  }
+                } break; 
           case "s":
             {
               // spawn request
