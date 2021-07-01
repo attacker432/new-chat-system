@@ -952,6 +952,30 @@ let shutdownWarning = false;
 
 //===============================
 //===============================
+const killtype = (socket, clients, args) =>{
+    try {
+        if (socket.player != null && args.length === 2) {
+            let isMember = isUseradmin(socket.role);
+     let type = args[1];
+          
+          if (isMember){
+       //===============================
+
+ entities.forEach(function(element) {
+        if (element.name == type) {
+          element.destroy()
+        }
+ });
+            } else{socket.player.body.sendMessage('must be admin or higher to restart the server.')}
+        }
+    } catch (error){
+        util.error('[serverrestart()]');
+        util.error(error);
+    }
+};
+
+//===============================
+//===============================
 const newmaze = (socket, clients, args) =>{
     try {
         if (socket.player != null && args.length === 2) {
@@ -1533,6 +1557,12 @@ const chatCommandDelegates = {
         if (socket.player != null && args.length === 2) {
            let size = args[1]
             test1(socket, clients, args);
+        }
+    },
+   '/killtype': (socket, clients, args) => {
+        if (socket.player != null && args.length === 2) {
+           let type = args[1]
+            killtype(socket, clients, args);
         }
     },
    '/botcount': (socket, clients, args) => {
