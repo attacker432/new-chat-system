@@ -2178,34 +2178,21 @@ class io_nearestDifferentMaster extends IO {
     if (!out.length) return [];
 
     out = out
-      .map(e => {
-        // Only look at those within range and arc (more expensive, so we only do it on the few)
-        let danger2 = false;
-        if (
-          Math.pow(this.body.x - e.x, 2) + Math.pow(this.body.y - e.y, 2) <
-          sqrRange
-        ) {
-          if (this.body.firingArc == null || this.body.aiSettings.view360) {
-       //     danger2 = true;
-          } else if (
-            Math.abs(
-              util.angleDifference(
-                util.getDirection(this.body, e),
-                this.body.firingArc[0]
-              )
-            ) < this.body.firingArc[1]
-          )
-          danger2 = true;
+        out = out.map((e) => {
+      // Only look at those within range and arc (more expensive, so we only do it on the few)
+      let yaboi = false;
+      if (Math.pow(this.body.x - e.x, 2) + Math.pow(this.body.y - e.y, 2) < sqrRange) {
+        if (this.body.firingArc == null || this.body.aiSettings.view360) {
+          yaboi = true;
+        } else if (Math.abs(util.angleDifference(util.getDirection(this.body, e), this.body.firingArc[0])) < this.body.firingArc[1]) yaboi = true;
+      }
+      if (yaboi) {
+        if (danger == true) {
+        mostDangerous = Math.max(e.dangerValue, mostDangerous);
+        return e;
         }
-                if (danger2) {
-                // if (danger == true){
-            mostDangerous = Math.max(e.dangerValue, mostDangerous)
-            return true
-              //  }
-                 }
-                 
-      })
-      .filter(e => {
+      }
+    }).filter((e) => {
         // Only return the highest tier of danger
         if (e != null) {
           if (this.body.aiSettings.farm || e.dangerValue === mostDangerous) {
@@ -3034,32 +3021,49 @@ class Gun {
     }
   }
 
-  recoil() {
-    if (this.motion || this.position) {
-      // Simulate recoil
-      this.motion -= (0.25 * this.position) / roomSpeed;
-      this.position += this.motion;
-      if (this.position < 0) {
-        // Bouncing off the back
-        this.position = 0;
-        this.motion = -this.motion;
-      }
-      if (this.motion > 0) {
-        this.motion *= 0.75;
-      }
+   recoil() {
+      if (recoil == true) {
+        if (this.motion || this.position) {
+            // Simulate recoil
+            this.motion -= 0.25 * this.position / roomSpeed;
+            this.position += this.motion;
+            if (this.position < 0) { // Bouncing off the back
+                this.position = 0;
+                this.motion = -this.motion;
+            }
+            if (this.motion > 0) {
+                this.motion *= 0.75;
+            }
+        }   
+        if (this.canShoot && !this.body.settings.hasNoRecoil) {
+            // Apply recoil to motion
+            if (this.motion > 0) {
+                let recoilForce = -this.position * this.trueRecoil * 0.045 / roomSpeed;
+                this.body.accel.x += recoilForce * Math.cos(this.body.facing + this.angle);
+                this.body.accel.y += recoilForce * Math.sin(this.body.facing + this.angle);
+            }      
+        }} else
+        { if (this.motion || this.position) {
+            // Simulate recoil
+            this.motion -= 0 * this.position / roomSpeed;
+            this.position += this.motion;
+            if (this.position < 0) { // Bouncing off the back
+                this.position = 0;
+                this.motion = -this.motion;
+            }
+            if (this.motion > 0) {
+                this.motion *= 0;
+            }
+        }   
+        if (this.canShoot && !this.body.settings.hasNoRecoil) {
+            // Apply recoil to motion
+            if (this.motion > 0) {
+                let recoilForce = -this.position * this.trueRecoil * 0 / roomSpeed;
+                this.body.accel.x += recoilForce * Math.cos(this.body.facing + this.angle);
+                this.body.accel.y += recoilForce * Math.sin(this.body.facing + this.angle);
+            }      
+        }}
     }
-    if (this.canShoot && !this.body.settings.hasNoRecoil) {
-      // Apply recoil to motion
-      if (this.motion > 0) {
-        let recoilForce =
-          (-this.position * this.trueRecoil * 0.045) / roomSpeed;
-        this.body.accel.x +=
-          recoilForce * Math.cos(this.body.facing + this.angle);
-        this.body.accel.y +=
-          recoilForce * Math.sin(this.body.facing + this.angle);
-      }
-    }
-  }
 
   getSkillRaw() {
     if (this.bulletStats === "master") {
