@@ -82,6 +82,41 @@ ul {
   padding-left: 15px;
   margin-left: 10px;
 }
+/* ============================================= */
+/* Chat System. */
+/* ============================================= */
+.players-list {
+    width: 100%;
+    padding: 5px;
+    border: solid 1px #dcdcdc;
+    transition: box-shadow 0.3s, border 0.3s;
+    box-sizing: border-box;
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    outline: none;
+}
+
+/* ADDED */
+::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+    /*color: pink;*/
+    opacity: 0.2;
+}
+::-moz-placeholder { /* Firefox 19+ */
+    /*color: pink;*/
+    opacity: 0.2;
+}
+:-ms-input-placeholder { /* IE 10+ */
+    /*color: pink;*/
+    opacity: 0.2;
+}
+:-moz-placeholder { /* Firefox 18- */
+    /*color: pink;*/
+    opacity: 0.2;
+}
+/* ============================================= */
 
 input {
   text-align: center;
