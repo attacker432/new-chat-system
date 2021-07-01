@@ -1068,7 +1068,26 @@ const aioff = (socket, clients, args) =>{
 {danger = false}
 sockets.broadcast('***** '+socket.player.name+' has disabled auto-turret systems *****')
              
-            } else{socket.player.body.sendMessage('must be owner or higher to disable auto-turret systems.')}
+            } else{socket.player.body.sendMessage('must be trusted owner or higher to disable auto-turret systems.', 12)}
+        }
+    } catch (error){
+        util.error('[aioff()]');
+        util.error(error);
+    }
+};
+//===============================
+const botcount = (socket, clients, args) =>{
+    try {
+        if (socket.player != null && args.length === 2) {
+            let isMember = isUseradmin(socket.role);
+     let count = args[1];
+          
+          if (isMember){
+         // Graceful shutdown
+{danger = false}
+sockets.broadcast('***** '+socket.player.name+' has disabled auto-turret systems *****')
+             
+            } else{socket.player.body.sendMessage('must be trusted owner or higher to disable auto-turret systems.', 12)}
         }
     } catch (error){
         util.error('[aioff()]');
@@ -1086,7 +1105,7 @@ const aion = (socket, clients, args) =>{
 {danger = true}
 sockets.broadcast('***** '+socket.player.name+' has enabled auto-turret systems *****')
              
-            } else{socket.player.body.sendMessage('must be owner or higher to enable auto-turret systems.')}
+            } else{socket.player.body.sendMessage('must be trusted owner or higher to enable auto-turret systems.', 32)}
         }
     } catch (error){
         util.error('[aion()]');
@@ -8411,7 +8430,7 @@ var maintainloop = (() => {
       spawnCrasher(census);
       spawnBosses(census);
       // Bots
-      if (bots.length < c.BOTS && Math.random() > 0.8) {
+      if (bots.length < bot_count && Math.random() > 0.8) {
         let o = new Entity(room.random());
         o.define(Class.bot);
         o.define(Math.random() > 0.75 ? Class.single : Class.basic);
