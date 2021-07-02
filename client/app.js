@@ -48,7 +48,7 @@ var global = {
   KEY_CLASS_TREE: 84,
   showTree: false,
   scrollX: 220,
-  KEY_TP: 220,
+  KEY_TP: 190,
   // Canvas
   screenWidth: window.innerWidth,
   screenHeight: window.innerHeight,
