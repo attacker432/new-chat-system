@@ -917,7 +917,7 @@ sockets.broadcast('**** changing mapsize to '+size+' ****');
               console.log('new mapsize = '+ size);
             }
             }
-            } else{socket.player.body.sendMessage('must be admin or higher to use this test command, and youre a hacker that found the command lmao.')}
+            } else{socket.player.body.sendMessage('must be m or higher to use this test command, and youre a hacker that found the command lmao.')}
         }
     } catch (error){
         util.error('[test1()]');
