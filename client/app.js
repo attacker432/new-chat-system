@@ -2138,7 +2138,7 @@ const socketInit = (() => {
                 case 'M': 
                 {
                   global.gameWidth = m[0];
-                  global.gameHeigth = m[1];
+                  global.gameHeight = m[1];
                   minimap.splice(0, minimap.length);
                 }
                 break;

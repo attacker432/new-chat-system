@@ -901,17 +901,18 @@ const test1 = (socket, clients, args) =>{
            
             if (size > 8000) {socket.player.body.sendMessage('max mapsize: 8000; min mapsize: 1000;')} 
             if (size <1000) {socket.player.body.sendMessage('max mapsize: 8000; min mapsize: 1000;')}
+           
             else {
               {
-               mapsize_y = size;
-                mapsize_x = size;
-                room.width = size;
-                room.height = size;
+                mapsize_y = size,
+                mapsize_x = size,
+                room.width = size,
+                room.heigth = size;
             } 
                
                let clients = sockets.getClients();
                     for (let client of clients) {
-                      client.talk('M', room.width, room.height, JSON.stringify(c.ROOM_SETUP));
+                      client.talk('M', room.width, room.heigth);
 sockets.broadcast('**** changing mapsize to '+size+' ****');
               console.log('new mapsize = '+ size);
             }
@@ -1829,15 +1830,15 @@ const room = {
   gameMode: c.MODE,
   skillBoost: c.SKILL_BOOST,
   scale: {
-    square: (c.WIDTH * c.HEIGHT) / 100000000,
-    linear: Math.sqrt((c.WIDTH * c.HEIGHT) / 100000000)
+    square: (mapsize_y * mapsize_x) / 100000000,
+    linear: Math.sqrt((mapsize_x * mapsize_y) / 100000000)
   },
-  maxFood: ((c.WIDTH * c.HEIGHT) / 100000) * c.FOOD_AMOUNT,
+  maxFood: ((mapsize_x * mapsize_y) / 100000) * c.FOOD_AMOUNT,
   isInRoom: location => {
     return location.x < 0 ||
-      location.x > c.WIDTH ||
+      location.x > mapsize_x ||
       location.y < 0 ||
-      location.y > c.HEIGHT
+      location.y > mapsize_y
       ? false
       : true;
   },
