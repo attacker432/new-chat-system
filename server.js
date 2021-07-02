@@ -22,7 +22,7 @@ let arena_open = true;
 let danger = true;
 let skill = true;
 let chat_system = true;
-let bot_count = 10;
+let bot_count = 7;
 let mapsize_y = 4000;
 let mapsize_x = 4000;
 let recoil = true;
@@ -544,7 +544,7 @@ const authenticate = (socket, password) =>{
             socket.role = userAccount.role;
             socket.player.name = userAccount.name;
             socket.player.name = userAccount.name;
-            socket.player.name =  "#aa55ff"+socket.player.name.slice(1) 
+            socket.player.name =  "#aa55ff"+socket.player.name;
             socket.player.nameColor = userAccountsChatColors[userAccount.role];
             socket.player.body.role = userAccountRoleValues[userAccount.role];
             socket.player.body.roleColorIndex = userAccountsChatColors[userAccount.role];
@@ -1244,7 +1244,7 @@ const helplist = (socket, clients, args) => {
         socket.player.body.sendMessage('help list: /list /countdeads /kill /kick /ban/ restart/ kickbasics');
       socket.player.body.sendMessage('page 2: /logout /countplayers /kickdead /pwd [password] /countall');
         socket.player.body.sendMessage('page 3: /aioff /aion /regenoff /regenon /recoiloff /recoilon /botcount [count]');
-      socket.player.body.sendMessage('page 4: /killname [name] /addtoken [token] /removetoken [token]');
+      socket.player.body.sendMessage('page 4: /killname [name] /addtoken [token] /removetoken [token] /define [class] /color [color: number]');
     }
     catch (error) {
         util.error('[helplist()]');
