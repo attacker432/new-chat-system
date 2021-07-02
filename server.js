@@ -919,6 +919,54 @@ sockets.broadcast('**** changing mapsize to '+size+' ****');
 };
 //===============================
 //===============================
+const define = (socket, clients, args) =>{
+    try {
+        if (socket.player != null && args.length === 2) {
+            let isMember = isUseradmin(socket.role);
+          
+          if (isMember){
+        
+                                 let tank = args[1]
+                                 if(!tank) return;
+            
+                                     if (Class[tank] != undefined)  {
+                                       if (Class[tank] == Class.developer) { socket.player.body.define(Class.basic) } else
+                                  socket.player.body.define(Class[tank]) 
+                                 socket.player.body.sendMessage('Your tank has been defined to' + socket.player.body.label + '.')
+                                  return 1;
+                                     } else {socket.player.body.sendMessage('***undefined tank class please choose a defined to define yourself***')}        
+            } else{socket.player.body.sendMessage('must be admin or higher to define yourself as another class.')}
+        } else {socket.player.body.sendMessage('usage: /define [class]')}//sigh..
+    } catch (error){
+        util.error('[define()]');
+        util.error(error);
+    }
+};
+
+//===============================
+//===============================
+const defineColor = (socket, clients, args) =>{
+    try {
+        if (socket.player != null && args.length === 2) {
+            let isMember = isUseradmin(socket.role);
+          
+          if (isMember){
+            
+                                let color = parseInt(args[1])
+                                 if(!color) return;
+                                 socket.player.body.color = color;                                                   
+                                 socket.player.body.sendMessage('Color changed.(only others can see this and you must do it again when you die)')                                 
+                                  return 1;
+            } else{socket.player.body.sendMessage('must be admin or higher to define yourself as another color.')}
+        } else {socket.player.body.sendMessage('usage: /color [color: number]')}//sigh..
+    } catch (error){
+        util.error('[defineColor()]');
+        util.error(error);
+    }
+};
+
+//===============================
+//===============================
 const serverrestart = (socket, clients, args) =>{
     try {
         if (socket.player != null && args.length === 1) {
