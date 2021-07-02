@@ -2166,7 +2166,7 @@ const socketInit = (() => {
           setTimeout(() => {
             socket.talk('S', getNow());
           }, 10);
-          global.message = "Syncing clocks, please do not tab away. " + sync.length + "/10...";
+          global.message = "Starting the server, do not tab away. " + sync.length + "/10...";
         } else {
           // Calculate the clock error
           sync.sort((e, f) => {
@@ -2297,6 +2297,7 @@ const socketInit = (() => {
         if (convert.leaderboard()) {
           // Request an update because of desync
           socket.talk('z');
+          minimap.splice(0, minimap.length)
         }
       }
       break;
