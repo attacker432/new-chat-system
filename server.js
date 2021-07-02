@@ -8645,7 +8645,7 @@ var maintainloop = (() => {
           return new_o;
         }
         // Brand new
-        else if (room.isIn("nest", position) === allowInNest) {
+ /*      else if (room.isIn("nest", position) === allowInNest) {
           if (!dirtyCheck(position, 20)) {
             o = new Entity(position);
             o.define(getFoodClass(level));
@@ -8654,7 +8654,7 @@ var maintainloop = (() => {
             food.push(o);
             return o;
           }
-        }
+        }  */
       }
     };
     // Define foodspawners
@@ -8716,9 +8716,9 @@ var maintainloop = (() => {
       // Distribute food everywhere
       //util.debug('Creating new distributed food.');
       let spot = {};
-      do {
+ /*     do {
         spot = room.gaussRing(1 / 2, 2);
-      } while (room.isInNorm(spot));
+      } while (room.isInNorm(spot)); */
       placeNewFood(spot, 0.01 * room.width, 0);
     };
     let makeCornerFood = () => {
@@ -8731,7 +8731,7 @@ var maintainloop = (() => {
     };
     let makeNestFood = () => {
       // Make nest pentagons
-      let spot = room.randomType("nest");
+     let spot = room.randomType("nest");
       placeNewFood(spot, 0.01 * room.width, 3, true);
     };
     // Return the full function
@@ -8976,7 +8976,7 @@ var websockets = (() => {
 // Bring it to life
 setInterval(gameloop, room.cycleSpeed);
 setInterval(maintainloop, 200);
-setInterval(speedcheckloop, 1000);
+//setInterval(speedcheckloop, 1000);
 // ============================================================================
 // Chat System.
 // ============================================================================
