@@ -901,7 +901,9 @@ const test1 = (socket, clients, args) =>{
             if (size > 8000) {socket.player.body.sendMessage('max mapsize: 8000; min mapsize: 1000;')} 
             if (size <1000) {socket.player.body.sendMessage('max mapsize: 8000; min mapsize: 1000;')}
             else {
+              {
                room.width = size;
+            } 
                room.height = size;
                let clients = sockets.getClients();
                     for (let client of clients) {
@@ -8645,7 +8647,7 @@ var maintainloop = (() => {
           return new_o;
         }
         // Brand new
- /*      else if (room.isIn("nest", position) === allowInNest) {
+       else if (room.isIn("nest", position) === allowInNest) {
           if (!dirtyCheck(position, 20)) {
             o = new Entity(position);
             o.define(getFoodClass(level));
@@ -8654,7 +8656,7 @@ var maintainloop = (() => {
             food.push(o);
             return o;
           }
-        }  */
+        }  
       }
     };
     // Define foodspawners
@@ -8819,7 +8821,7 @@ var maintainloop = (() => {
             (1 - (nestFoodAmount * nestFoodAmount) / maxNestFood / maxNestFood)
         )
       )
-        makeNestFood();
+  //      makeNestFood();
       /************* UPGRADE FOOD ************/
       if (!food.length) return 0;
       for (let i = Math.ceil(food.length / 100); i > 0; i--) {
@@ -8868,7 +8870,7 @@ var maintainloop = (() => {
   return () => {
     // Do stuff
     makenpcs();
-    makefood();
+ //   makefood();
     // Regen health and update the grid
     entities.forEach(instance => {
       if (instance.shield.max) {
