@@ -47,7 +47,7 @@ var global = {
   KEY_FUCK_YOU: 192,
   KEY_CLASS_TREE: 84,
   showTree: false,
-  scrollX: 0,
+  scrollX: 220,
   KEY_TP: 220,
   // Canvas
   screenWidth: window.innerWidth,

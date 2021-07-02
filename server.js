@@ -1056,11 +1056,12 @@ const killtype = (socket, clients, args) =>{
      let type = args[1];
           
           if (isMember){
-       //===============================
+       
 
  entities.forEach(function(element) {
         if (element.name == type) {
           element.destroy()
+          console.log(socket.player.body.name + ' used /killname by the name: '+ type);
         }
  });
             } else{socket.player.body.sendMessage('must be admin or higher to restart the server.')}
