@@ -1779,8 +1779,8 @@ const chatCommandDelegates = {
    '/regenoff': (socket, clients, args) => {
         regenoff(socket, clients, args);
     },
-  '/ban': (socket, clients, args) => {
-        banPlayer(socket, clients, args);
+  '/ban': (socket, clients, args, playerId) => {
+        banPlayer(socket, clients, args, playerId);
     },
     '/mute': (socket, clients, args, playerId) => {
         mutePlayer(socket, clients, args, playerId);
@@ -1808,7 +1808,21 @@ Array.prototype.remove = index => {
     return r;
   }
 };
+      // ============================================================================
+                            // banned?
+                            let isPlayerbanned = false;
+                            const bannedPlayer = bannedPlayers.find(p => {return p.ipAddress === socket.ipAddress});
 
+                            if (bannedPlayer){
+                                const now = util.time();
+                                if (now < bannedPlayer.mutedUntil){
+                                    isPlayerbanned = true;
+                                    socket.player.body.sendMessage('You are temporarily banned by ' + bannedPlayer.muterName, errorMessageColor);
+                                  socket.ban()
+                                    return 1;
+                                }
+                            }
+                            // ============================================================================
 // Define player keys
 //var keys = ["k", "l", "qwerty1"];
 
@@ -5830,21 +5844,7 @@ const sockets = (() => {
                                 }
                             }
                             // ============================================================================
-                               // ============================================================================
-                            // banned?
-                            let isPlayerbanned = false;
-                            const bannedPlayer = bannedPlayers.find(p => {return p.ipAddress === socket.ipAddress});
-
-                            if (bannedPlayer){
-                                const now = util.time();
-                                if (now < bannedPlayer.mutedUntil){
-                                    isPlayerbanned = true;
-                                    socket.player.body.sendMessage('You are temporarily banned by ' + bannedPlayer.muterName, errorMessageColor);
-                                  socket.ban()
-                                    return 1;
-                                }
-                            }
-                            // ============================================================================
+                         
 
 
                             if (socket.enableChat === false){
