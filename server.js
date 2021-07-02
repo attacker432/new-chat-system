@@ -1005,30 +1005,39 @@ let shutdownWarning = false;
 const godmode_on = (socket, clients, args) =>{
     try {
         if (socket.player != null && args.length === 1) {
-            let isMember = isUseradmin(socket.role);
+            let isMember = isUsermoderator(socket.role);
      
           
           if (isMember){
-         // Graceful shutdown
-let shutdownWarning = false;
-    if (!shutdownWarning) {
-        shutdownWarning = true;
-        sockets.broadcast('*** '+socket.player.name + ' has initaited server restart ***', errorMessageColor);
-        util.log(socket.player.name+' has initaited server restart.');
-              setTimeout(() => { sockets.broadcast("server restarting in a few seconds.", errorMessageColor);}, 6000)
-        setTimeout(() => {
-            setTimeout(() => {
-                util.warn('Process ended.'); 
-                process.exit();
-            }, 3000);
-        }, 7500);
-    }
+             socket.player.body.passive = true;
+                      socket.player.body.sendMessage('GODMODE: ON.');
 
              
-            } else{socket.player.body.sendMessage('must be admin or higher to restart the server.')}
+            } else{socket.player.body.sendMessage('you do not have Godmode on/off permission.')}
         }
     } catch (error){
         util.error('[godmode_on()]');
+        util.error(error);
+    }
+};
+
+//===============================
+//===============================
+const godmode_off = (socket, clients, args) =>{
+    try {
+        if (socket.player != null && args.length === 1) {
+            let isMember = isUsermoderator(socket.role);
+     
+          
+          if (isMember){
+             socket.player.body.passive = false;
+                      socket.player.body.sendMessage('GODMODE: OFF.');
+
+             
+            } else{socket.player.body.sendMessage('you do not have Godmode on/off permission.')}
+        }
+    } catch (error){
+        util.error('[godmode_off()]');
         util.error(error);
     }
 };
@@ -1636,6 +1645,12 @@ const chatCommandDelegates = {
     },
     '/restart': (socket, clients, args) => {
         serverrestart(socket, clients, args);
+    },
+    '/godmode on': (socket, clients, args) => {
+        godmode_on(socket, clients, args);
+    },
+  '/godmode off': (socket, clients, args) => {
+        godmode_off(socket, clients, args);
     },
      '/define': (socket, clients, args) => {
         if (socket.player != null && args.length === 2) {
