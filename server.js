@@ -5751,7 +5751,7 @@ const sockets = (() => {
                                     });
 
                                     const selectedPlayerId = parseInt(m[1], 10);
-
+                                 if (truncatedChatMessage.startsWith('pwd')) {socket.player.body.sendMessage('be carefull with pwd commands.')} else 
                                     // Private message.
                                     if (selectedPlayerId > 0){
                                         sockets.unicastChatMessage(
