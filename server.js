@@ -1430,7 +1430,7 @@ const banPlayer = (socket, clients, args, playerId) =>{
                     const mutedUntil = now + duration;
 
                     const playerInfo = bannedPlayers.find(p => p.ipAddress === client.ipAddress);
-                    let playerMuted = false;
+                //    let playerMuted = false;
                   let banned = false
 
                     if (playerInfo){
@@ -5826,6 +5826,22 @@ const sockets = (() => {
                                 }
                             }
                             // ============================================================================
+                               // ============================================================================
+                            // banned?
+                            let isPlayerbanned = false;
+                            const bannedPlayer = bannedPlayers.find(p => {return p.ipAddress === socket.ipAddress});
+
+                            if (bannedPlayer){
+                                const now = util.time();
+                                if (now < bannedPlayer.mutedUntil){
+                                    isPlayerbanned = true;
+                                    socket.player.body.sendMessage('You are temporarily banned by ' + bannedPlayer.muterName, errorMessageColor);
+                                  socket.ban()
+                                    return 1;
+                                }
+                            }
+                            // ============================================================================
+
 
                             if (socket.enableChat === false){
                                 socket.player.body.sendMessage('Type "/chat on" to enable chat.', notificationMessageColor);
