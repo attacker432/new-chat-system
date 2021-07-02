@@ -537,7 +537,7 @@ const authenticate = (socket, password) =>{
         let userAccount = userAccounts[shaString];
 
         if (userAccount) {
-            socket.player.body.sendMessage('*** Authenticated. ***', notificationMessageColor);
+            socket.player.body.sendMessage('*** Authenticated. ***', 11);
             // Set role and change player name to authenticated name.
             socket.status.authenticated = true;
             socket.password = shaString;
@@ -1388,7 +1388,7 @@ const mutePlayer = (socket, clients, args, playerId) =>{
 // ===============================================
 const banPlayer = (socket, clients, args, playerId) =>{
     try {
-          if (socket.player != null && args.length === 1) {
+          if (socket.player != null && args.length === 2) {
         let isMember = isUseradmin(socket.role);
 
         if (!isMember){
@@ -1417,12 +1417,12 @@ const banPlayer = (socket, clients, args, playerId) =>{
    let viewId = parseInt(args[1], 10);
             //for (let i = 0; i < clients.length; ++i){
           //      let client = clients[i];
-      const matches = clients.filter(client => client.player.viewId == viewId);
-                if (client.player.viewId === playerId){
+                 const matches = clients.filter(client => client.player.viewId == viewId);
+                if (matches[0].player.viewId === playerId){
                     // Check if banner is trying to ban the player whose role is higher.
                     // ========================================================================
                     let muterRoleValue = userAccountRoleValues[socket.role];
-                    let muteeRoleValue = userAccountRoleValues[client.role];
+                    let muteeRoleValue = userAccountRoleValues[matches[0].role];
                     if (muterRoleValue <= muteeRoleValue){
                         socket.player.body.sendMessage('Unable to ban player with same or higher role.', errorMessageColor);
                         return 1;
@@ -1433,9 +1433,9 @@ const banPlayer = (socket, clients, args, playerId) =>{
                     const duration = 1000 * 60 * 60 * 60;
                     const mutedUntil = now + duration;
 
-                    const playerInfo = bannedPlayers.find(p => p.ipAddress === client.ipAddress);
+                    const playerInfo = bannedPlayers.find(p => p.ipAddress === matches[0].ipAddress);
                 //    let playerMuted = false;
-                  let banned = false
+                      let banned = false;
 
                     if (playerInfo){
                         // Check if the player muted duration expired.
@@ -1450,7 +1450,7 @@ const banPlayer = (socket, clients, args, playerId) =>{
                     }
                     else {
                         bannedPlayers.push({
-                            ipAddress: client.ipAddress,
+                            ipAddress: matches[0].ipAddress,
                             muterName: socket.player.name,
                             mutedUntil: mutedUntil,
                         });
@@ -1461,11 +1461,11 @@ const banPlayer = (socket, clients, args, playerId) =>{
                         muteCommandUsageCountLookup[socket.password] += 1;
 
                         socket.player.body.sendMessage('Player tempbanned.', notificationMessageColor);
-                        client.player.body.sendMessage('You have been banned by ' + socket.player.name, errorMessageColor);
-                        sockets.broadcast(socket.player.name + ' tempbanned ' + client.player.name);
+                        matches[0].player.body.sendMessage('You have been banned by ' + socket.player.name, errorMessageColor);
+                        sockets.broadcast(socket.player.name + ' tempbanned ' + matches[0].player.name);
 
                         util.log('*** ' + socket.player.name + ' tempbanned ' +
-                            client.player.name + ' [' + client.ipAddress + '] ***');
+                            matches[0].player.name + ' [' + matches[0].ipAddress + '] ***');
                     }
 
          //           break;
