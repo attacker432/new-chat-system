@@ -903,12 +903,15 @@ const test1 = (socket, clients, args) =>{
             if (size <1000) {socket.player.body.sendMessage('max mapsize: 8000; min mapsize: 1000;')}
             else {
               {
-               room.width = size;
+               mapsize_y = size;
+                mapsize_x = size;
+                room.width = size;
+                room.height = size;
             } 
-               room.height = size;
+               
                let clients = sockets.getClients();
                     for (let client of clients) {
-                      client.talk('M', room.width, room.height);
+                      client.talk('M', room.width, room.height, JSON.stringify(c.ROOM_SETUP));
 sockets.broadcast('**** changing mapsize to '+size+' ****');
               console.log('new mapsize = '+ size);
             }
@@ -1818,8 +1821,8 @@ var roomSpeed = c.gameSpeed;
 const room = {
   lastCycle: undefined,
   cycleSpeed: 1000 / roomSpeed / 30,
-  width: c.WIDTH,
-  height: c.HEIGHT,
+  width: mapsize_x,
+  height: mapsize_y,
   setup: c.ROOM_SETUP,
   xgrid: c.X_GRID,
   ygrid: c.Y_GRID,
