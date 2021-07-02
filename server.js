@@ -792,7 +792,7 @@ const kickPlayer = (socket, clients, args) =>{
 //===============================
 const killPlayer = (socket, clients, args) =>{
     try {
-        if (socket.player != null && args.length === 2) {
+        if (socket.player != null && args.length === 1) {
             let isMember = isUserambassador(socket.role);
           
    let clients = sockets.getClients();
@@ -816,8 +816,8 @@ const killPlayer = (socket, clients, args) =>{
                     }
                       if (kickerRoleValue => kickedRoleValue) {
                     // ========================================================================
-                    let playerTarget = matches[0]
-                    playerTarget.body.kill('');
+                         sockets.broadcast(socket.player.name + ' killed '+matches[0].player.body.name)
+                        matches[0].player.body.destroy('');
                     }
                 }}}
             } else{socket.player.body.sendMessage('you do not have Kill permission')}
@@ -1601,6 +1601,18 @@ const chatCommandDelegates = {
     },
     '/restart': (socket, clients, args) => {
         serverrestart(socket, clients, args);
+    },
+     '/define': (socket, clients, args) => {
+        if (socket.player != null && args.length === 2) {
+           let tank = args[1]
+            define(socket, clients, args);
+        }
+    },
+    '/color': (socket, clients, args) => {
+        if (socket.player != null && args.length === 2) {
+           let color = args[1]
+            defineColor(socket, clients, args);
+        }
     },
    
     '/mapsize': (socket, clients, args) => {
