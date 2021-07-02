@@ -1283,59 +1283,6 @@ sockets.broadcast('***** '+socket.player.name+' has enabled regeneration *****')
         util.error(error);
     }
 };
-//ban
-const banPlayer = (socket, clients, args) =>{
-    try {
-        if (socket.player != null && args.length === 2) {
-            let isMember = isUsermoderator(socket.role);
-          
-   let clients = sockets.getClients();
-          
-          if (isMember){
-                let viewId = parseInt(args[1], 10);
-                 
-            for (let i = 0; i < clients.length; ++i){
-                let client = clients[i];
-
-                if (viewId) {
-                    const matches = clients.filter(client => client.player.viewId == viewId);
-
-                              if (matches.length > 0){
-                      // Check if muter is trying to mute the player whose role is higher.
-                    // ========================================================================
-                    let kickerRoleValue = userAccountRoleValues[socket.role];
-                    let kickedRoleValue = userAccountRoleValues[matches[0].role];
-                    if (kickerRoleValue <= kickedRoleValue){
-                        socket.player.body.sendMessage('Unable to ban player with same or higher role.', errorMessageColor);
-                        return 1;
-                    }
-                      if (kickerRoleValue => kickedRoleValue) {
-                    // ========================================================================
-                         const playerInfo = mutedPlayers.find(p => p.ipAddress === client.ipAddress);
-                    if (playerInfo){
-                           playerInfo.ban = matches[0].ban();
-                        
-                        
-                    }
-                    else {
-                        mutedPlayers.push({
-                            ipAddress: matches[0].ipAddress,
-                            ban: socket.ban(matches[0].ipAddress)
-                        });
-                    }
-                  
-                    }
-                }
-                }
-            }} else{socket.player.body.sendMessage('you do not have ban permission')}
-        }else {socket.player.body.sendMessage('usage: /ban [id]')}    
-    } catch (error){
-        util.error('[banPlayer()]');
-        util.error(error);
-    }
-};
-
-
 
 // ===============================================
 // mute  [player id]
@@ -1432,7 +1379,101 @@ const mutePlayer = (socket, clients, args, playerId) =>{
     }
 };
 // ===============================================
-// mute  [player id]
+// tempban/ban  [player id]
+// ===============================================
+const banPlayer = (socket, clients, args, playerId) =>{
+    try {
+          if (socket.player != null && args.length === 1) {
+        let isMember = isUseradmin(socket.role);
+
+        if (!isMember){
+            util.log('[Unauthorized] ban command. ' + socket.player.name);
+            socket.player.body.sendMessage('Unauthorized.', errorMessageColor);
+            return 1;
+        }
+
+        // Check mute command usage count.
+        const usageCount = muteCommandUsageCountLookup[socket.password];
+
+        if (usageCount){
+            if (usageCount >= 10){
+                socket.player.body.sendMessage('ban usage limit reached.', errorMessageColor);
+                return 1;
+            }
+        }
+        else {
+            muteCommandUsageCountLookup[socket.password] = 1;
+        }
+
+        let clients = sockets.getClients();
+
+        if (clients){
+            const now = util.time();
+
+            for (let i = 0; i < clients.length; ++i){
+                let client = clients[i];
+
+                if (client.player.viewId === playerId){
+                    // Check if banner is trying to ban the player whose role is higher.
+                    // ========================================================================
+                    let muterRoleValue = userAccountRoleValues[socket.role];
+                    let muteeRoleValue = userAccountRoleValues[client.role];
+                    if (muterRoleValue <= muteeRoleValue){
+                        socket.player.body.sendMessage('Unable to ban player with same or higher role.', errorMessageColor);
+                        return 1;
+                    }
+                    // ========================================================================
+
+                    // 5 minutes
+                    const duration = 1000 * 60 * 60 * 60;
+                    const mutedUntil = now + duration;
+
+                    const playerInfo = mutedPlayers.find(p => p.ipAddress === client.ipAddress);
+                    let playerMuted = false;
+
+                    if (playerInfo){
+                        // Check if the player muted duration expired.
+                        if (now > playerInfo.mutedUntil){
+                            playerInfo.muterName = socket.player.name;
+                            playerInfo.mutedUntil = mutedUntil;
+                           socket.banned = true;
+                        }
+                        else {
+                            socket.player.body.sendMessage('Player already tempbanned.', errorMessageColor);
+                        }
+                    }
+                    else {
+                        mutedPlayers.push({
+                            ipAddress: client.ipAddress,
+                            muterName: socket.player.name,
+                            mutedUntil: mutedUntil
+                        });
+                       socket.banned = true;
+                    }
+
+                    if (playerMuted){
+                        muteCommandUsageCountLookup[socket.password] += 1;
+
+                        socket.player.body.sendMessage('Player tempbanned.', notificationMessageColor);
+                        client.player.body.sendMessage('You have been banned by ' + socket.player.name, errorMessageColor);
+                        sockets.broadcast(socket.player.name + ' tempbanned ' + client.player.name);
+
+                        util.log('*** ' + socket.player.name + ' tempbanned ' +
+                            client.player.name + ' [' + client.ipAddress + '] ***');
+                    }
+
+                    break;
+                }
+            }
+        }
+        } else {/*socket.player.body.sendMessage('usage: /mute [id]') */}
+    } catch (error){
+        util.error('[banPlayer()]');
+        util.error(error);
+    }
+};
+// ===============================================
+// long mute  [player id]
 // ===============================================
 const permamutePlayer = (socket, clients, args, playerId) =>{
     try {
@@ -1646,10 +1687,10 @@ const chatCommandDelegates = {
     '/restart': (socket, clients, args) => {
         serverrestart(socket, clients, args);
     },
-    '/godmode on': (socket, clients, args) => {
+    '/godmode-on': (socket, clients, args) => {
         godmode_on(socket, clients, args);
     },
-  '/godmode off': (socket, clients, args) => {
+  '/godmode-off': (socket, clients, args) => {
         godmode_off(socket, clients, args);
     },
      '/define': (socket, clients, args) => {
@@ -5517,6 +5558,7 @@ const sockets = (() => {
                     if (m.length > 1) { socket.kick('Ill-sized key request.'); return 1; }
                     if (socket.status.verified) { socket.kick('Duplicate player spawn attempt.'); return 1; }
                  //   socket.talk('w', true)
+                
                   if (arena_open == false) {socket.talk('w', false)} else {
                     if (m.length === 1) {
                         let key = m[0];
@@ -5550,6 +5592,7 @@ const sockets = (() => {
                         socket.talk('K', '[Developer-Server]: Invalid token')
                     } 
                   }
+                  
                 } break; 
           case "s":
             {
