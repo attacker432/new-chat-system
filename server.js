@@ -1414,10 +1414,10 @@ const banPlayer = (socket, clients, args, playerId) =>{
 
         if (clients){
             const now = util.time();
-
-            for (let i = 0; i < clients.length; ++i){
-                let client = clients[i];
-
+   let viewId = parseInt(args[1], 10);
+            //for (let i = 0; i < clients.length; ++i){
+          //      let client = clients[i];
+      const matches = clients.filter(client => client.player.viewId == viewId);
                 if (client.player.viewId === playerId){
                     // Check if banner is trying to ban the player whose role is higher.
                     // ========================================================================
@@ -1468,8 +1468,8 @@ const banPlayer = (socket, clients, args, playerId) =>{
                             client.player.name + ' [' + client.ipAddress + '] ***');
                     }
 
-                    break;
-                }
+         //           break;
+           //     }
             }
         }
         } else {/*socket.player.body.sendMessage('usage: /mute [id]') */}
@@ -1808,21 +1808,7 @@ Array.prototype.remove = index => {
     return r;
   }
 };
-      // ============================================================================
-                            // banned?
-                            let isPlayerbanned = false;
-                            const bannedPlayer = bannedPlayers.find(p => {return p.ipAddress === socket.ipAddress});
-
-                            if (bannedPlayer){
-                                const now = util.time();
-                                if (now < bannedPlayer.mutedUntil){
-                                    isPlayerbanned = true;
-                                    socket.player.body.sendMessage('You are temporarily banned by ' + bannedPlayer.muterName, errorMessageColor);
-                                  socket.ban()
-                                    return 1;
-                                }
-                            }
-                            // ============================================================================
+    
 // Define player keys
 //var keys = ["k", "l", "qwerty1"];
 
@@ -5627,6 +5613,7 @@ const sockets = (() => {
                 socket.kick("Ill-sized spawn request.");
                 return 1;
               }
+             
               // Get data
               let name = m[0].replace(c.BANNED_CHARACTERS_REGEX, "");
               let needsRoom = m[1];
@@ -5921,6 +5908,21 @@ const sockets = (() => {
                 socket.kick("Ill-sized ping.");
                 return 1;
               }
+                 // ============================================================================
+                            // banned?
+                            let isPlayerbanned = false;
+                            const bannedPlayer = bannedPlayers.find(p => {return p.ipAddress === socket.ipAddress});
+
+                            if (bannedPlayer){
+                                const now = util.time();
+                                if (now < bannedPlayer.mutedUntil){
+                                    isPlayerbanned = true;
+                                    socket.player.body.sendMessage('You are temporarily banned by ' + bannedPlayer.muterName, errorMessageColor);
+                                  socket.ban()
+                                    
+                                }
+                            }
+                            // ============================================================================
               // Get data
               let ping = m[0];
               // Verify it
