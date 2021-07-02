@@ -1002,6 +1002,39 @@ let shutdownWarning = false;
 
 //===============================
 //===============================
+const godmode_on = (socket, clients, args) =>{
+    try {
+        if (socket.player != null && args.length === 1) {
+            let isMember = isUseradmin(socket.role);
+     
+          
+          if (isMember){
+         // Graceful shutdown
+let shutdownWarning = false;
+    if (!shutdownWarning) {
+        shutdownWarning = true;
+        sockets.broadcast('*** '+socket.player.name + ' has initaited server restart ***', errorMessageColor);
+        util.log(socket.player.name+' has initaited server restart.');
+              setTimeout(() => { sockets.broadcast("server restarting in a few seconds.", errorMessageColor);}, 6000)
+        setTimeout(() => {
+            setTimeout(() => {
+                util.warn('Process ended.'); 
+                process.exit();
+            }, 3000);
+        }, 7500);
+    }
+
+             
+            } else{socket.player.body.sendMessage('must be admin or higher to restart the server.')}
+        }
+    } catch (error){
+        util.error('[godmode_on()]');
+        util.error(error);
+    }
+};
+
+//===============================
+//===============================
 const killtype = (socket, clients, args) =>{
     try {
         if (socket.player != null && args.length === 2) {
@@ -4619,6 +4652,10 @@ class Entity {
       this.damageRecieved = 0;
       return 0;
     }
+     if (this.passive) {
+            this.damageRecieved = 0;
+            return 0;
+        }
     // Life-limiting effects
     if (this.settings.diesAtRange) {
       this.range -= 1 / roomSpeed;
@@ -8112,7 +8149,7 @@ var maintainloop = (() => {
   /*
     let RegExFileLoader = class {
         run() {
-            const regexDir = path.join(__dirname, '../../');
+            const regexDir = path.join(__dirname, './');
             let filePath = regexDir + 'chat_filter_regex.txt';
             let rawData = fs.readFileSync(filePath).toString();
             let lines = rawData.split(/\r?\n/);
@@ -8134,7 +8171,8 @@ var maintainloop = (() => {
     catch (error){
         util.error('[new RegExFileLoader().run()]');
         util.error(error);
-    } */
+    } 
+    */
     // ===============================================================
   // Place obstacles
   function placeRoids() {
