@@ -55,6 +55,7 @@ const maxChatMessageLength = 100;
 let regExList = [];
 // Muted players for chat system.
 let mutedPlayers = [];
+let bannedPlayers = [];
 let muteCommandUsageCountLookup = {};
 
 // Authentication.
@@ -1428,30 +1429,31 @@ const banPlayer = (socket, clients, args, playerId) =>{
                     const duration = 1000 * 60 * 60 * 60;
                     const mutedUntil = now + duration;
 
-                    const playerInfo = mutedPlayers.find(p => p.ipAddress === client.ipAddress);
+                    const playerInfo = bannedPlayers.find(p => p.ipAddress === client.ipAddress);
                     let playerMuted = false;
+                  let banned = false
 
                     if (playerInfo){
                         // Check if the player muted duration expired.
                         if (now > playerInfo.mutedUntil){
                             playerInfo.muterName = socket.player.name;
                             playerInfo.mutedUntil = mutedUntil;
-                           socket.banned = true;
+                     banned = true;
                         }
                         else {
                             socket.player.body.sendMessage('Player already tempbanned.', errorMessageColor);
                         }
                     }
                     else {
-                        mutedPlayers.push({
+                        bannedPlayers.push({
                             ipAddress: client.ipAddress,
                             muterName: socket.player.name,
-                            mutedUntil: mutedUntil
+                            mutedUntil: mutedUntil,
                         });
-                       socket.banned = true;
+                      banned = true;
                     }
 
-                    if (playerMuted){
+                    if (banned){
                         muteCommandUsageCountLookup[socket.password] += 1;
 
                         socket.player.body.sendMessage('Player tempbanned.', notificationMessageColor);
@@ -5592,7 +5594,9 @@ const sockets = (() => {
                         socket.talk('K', '[Developer-Server]: Invalid token')
                     } 
                   }
-                  
+                 if (socket.status.banned == true)  {   socket.lastWords('w', false);
+                        socket.talk('K', 'You are banned, you cannot rejoin until server restart!')
+                                             socket.kick()}
                 } break; 
           case "s":
             {
