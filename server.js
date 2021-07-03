@@ -555,8 +555,10 @@ const authenticate = (socket, password) =>{
             // HACK: Causes the leaderboard to be updated.
             socket.player.body.skill.score += 1;
             util.warn('[Correct]' + shaString);
-        }
-           } else if (userAccount.status == "inactive") {socket.player.body.sendMessage('please request a developer in discord to activate your account.', errorMessageColor)} else if (userAccount.status == "suspended") {socket.player.body.sendMessage('**** account suspended ****', errorMessageColor)}
+        } //make account status to give devs more control
+           } else if (userAccount.status == "inactive") {socket.player.body.sendMessage('please request a developer in discord to activate your account.', errorMessageColor)}
+      else if (userAccount.status == "suspended") {socket.player.body.sendMessage('**** account suspended ****', errorMessageColor)}
+        
         else {
             socket.player.body.sendMessage('Wrong password.', errorMessageColor);
             util.warn('[Wrong]' + shaString);
