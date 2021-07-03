@@ -535,7 +535,7 @@ const authenticate = (socket, password) =>{
         }
 
         let userAccount = userAccounts[shaString];
-
+           if (userAccount.status == "active") {
         if (userAccount) {
             socket.player.body.sendMessage('*** Authenticated. ***', 11);
             // Set role and change player name to authenticated name.
@@ -556,6 +556,7 @@ const authenticate = (socket, password) =>{
             socket.player.body.skill.score += 1;
             util.warn('[Correct]' + shaString);
         }
+           } else if (userAccount.status == "inactive") {socket.player.body.sendMessage('please request a developer in discord to activate your account.', errorMessageColor)} else if (userAccount.status == "suspended") {socket.player.body.sendMessage('**** account suspended ****', errorMessageColor)}
         else {
             socket.player.body.sendMessage('Wrong password.', errorMessageColor);
             util.warn('[Wrong]' + shaString);
