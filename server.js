@@ -1067,7 +1067,7 @@ const killtype = (socket, clients, args) =>{
             } else{socket.player.body.sendMessage('must be admin or higher to restart the server.')}
         }
     } catch (error){
-        util.error('[serverrestart()]');
+        util.error('[killtype, kill()]');
         util.error(error);
     }
 };
