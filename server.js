@@ -544,7 +544,7 @@ const authenticate = (socket, password) =>{
             socket.role = userAccount.role;
             socket.player.name = userAccount.name;
             socket.player.name = userAccount.name;
-            socket.player.name =  "#aa55ff"+socket.player.name;
+         //   socket.player.name =  "#aa55ff"+socket.player.name;
             socket.player.nameColor = userAccountsChatColors[userAccount.role];
             socket.player.body.role = userAccountRoleValues[userAccount.role];
             socket.player.body.roleColorIndex = userAccountsChatColors[userAccount.role];
