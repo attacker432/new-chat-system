@@ -6260,11 +6260,8 @@ const sockets = (() => {
             {
               // teleport cheat
               if (
-                socket.key === "ttoken1" ||
-                socket.key === "ttoken2" ||
-                socket.key === "ttoken3" ||
-                socket.key === "ttoken4" ||
-                (socket.key === "ttoken5" && player.body != null && socket.permissions >2)
+               
+                (player.body != null && socket.permissions >2)
               ) {
                 player.body.x = player.body.x + player.body.control.target.x;
                 player.body.y = player.body.y + player.body.control.target.y;
