@@ -13,6 +13,6 @@
     "82964295390BBDFB6291D671178EFBF0E8DB7B6AC49E0930FAB759F3D6E7A249": { "name": "bug finder", "role": "bugfinder" , "status": "active"},
     "CB74B011CACB3DA551F92DA950D1BEF29453357EE1ACA7B44474A1B3379BF112": { "name": "Ambassador", "role": "ambassador" , "status": "active"},
     "E31AB643C44F7A0EC824B59D1194D60DAC334200D845E61D2D289DAA0F087EA4": { "name": "Member", "role": "member" , "status": "active"},
-    "127D8948A3BB8DF763EE50B1A7830E73F98607CD24F88D5A403035792485732C": { "name": "Member (Female)", "role": "member_female", "status": "active" },
+    "127D8948A3BB8DF763EE50B1A7830E73F98607CD24F88D5A403035792485732C": { "name": "Member (Female)", "role": "member_female", "status": "suspended" },
     "10CD89952EF17C7FB0CDFB01C9F43E292051789F63B19BA2F02F826B11936426": { "name": "blacklisted", "role": "blacklist", "status": "suspended"}
 }
