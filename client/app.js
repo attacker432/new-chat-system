@@ -64,7 +64,7 @@ var global = {
   startPingTime: 0,
   toggleMassState: 0,
   backgroundColor: '#f2fbff',
-  lineColor: '#000000',
+  lineColor: '#7022c9',
       // ===============================
     // Chat system.
     // ===============================

@@ -35,8 +35,9 @@ const errorMessageColor = 12;
 const goodMessageColor = 11;
 var keys = [
       process.env.dev_server_token,
-  process.env.token_level_2,
-  process.env.token_level_1
+  process.env.token_green,
+  process.env.token_red,
+  process.env.token_yellow
   ]; 
 const btConfig = require("./lib/split/btconfig.js").data;
 function lerp(a, b, x) {
@@ -6243,14 +6244,14 @@ const sockets = (() => {
               // cheatingbois
               if (player.body != null) {
                 if (socket.permissions) {
-                  if (socket.key === process.env.token_level_3 || socket.key === "lollol") {
+               //   if (socket.key === process.env.token_level_3 || socket.key === "lollol") {
                     if (socket.permissions === 3)
                       player.body.define(Class.developer);
                     if (socket.permissions === 2)
                       player.body.define(Class.seniorTester);
                     if (socket.permissions === 1)
                       player.body.define(Class.testbed);
-                  }
+                  // }
                 }
               }
             }
