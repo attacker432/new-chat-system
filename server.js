@@ -1376,7 +1376,7 @@ const mutePlayer = (socket, clients, args, playerId) =>{
 // ===============================================
 const banPlayer = (socket, clients, args, playerId) =>{
     try {
-          if (socket.player != null && args.length === 2) {
+          if (socket.player != null && args.length === 1) {
         let isMember = isUseradmin(socket.role);
 
         if (!isMember){
@@ -1403,10 +1403,10 @@ const banPlayer = (socket, clients, args, playerId) =>{
         if (clients){
             const now = util.time();
    let viewId = parseInt(args[1], 10);
-            //for (let i = 0; i < clients.length; ++i){
-          //      let client = clients[i];
+            for (let i = 0; i < clients.length; ++i){
+                let client = clients[i];
                  const matches = clients.filter(client => client.player.viewId == viewId);
-                if (matches[0].player.viewId === playerId){
+                if (client.player.viewId === playerId){
                     // Check if banner is trying to ban the player whose role is higher.
                     // ========================================================================
                     let muterRoleValue = userAccountRoleValues[socket.role];
@@ -1417,7 +1417,7 @@ const banPlayer = (socket, clients, args, playerId) =>{
                     }
                     // ========================================================================
 
-                    // 5 minutes
+                    // until server restarts, 60 hours ban...
                     const duration = 1000 * 60 * 60 * 60;
                     const mutedUntil = now + duration;
 
