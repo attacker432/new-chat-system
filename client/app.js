@@ -914,7 +914,7 @@ class Canvas {
                         for (var i = 0; i < players.length; i+=2) {
                             var option = document.createElement("option");
                             option.value = players[i];
-                            option.text = players[i+1, players.viewId];
+                            option.text = players[i+1];
                             playersDropDownList.appendChild(option);
                         }
 
@@ -2121,7 +2121,8 @@ const socketInit = (() => {
                 // m[2] => Player Id
                 // m[3] => Player Name
                 // ==================================================
-                global.playersList = m;
+                global.playersList += player.id;
+              global.playersList = m;
             } break;
             // =============================================================
       case 'R': { // room setup

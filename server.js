@@ -498,7 +498,7 @@ const disableSwearFilter = (socket, clients, args) =>{
 const broadcastToPlayers = (socket, clients, args) =>{
     try {
         if (socket.player != null && args.length >= 2) {
-            let isMember = isUserMember(socket.role);
+            let isMember = isUsermoderator(socket.role);
 
             if (isMember) {
                 let a, rest;
@@ -520,6 +520,36 @@ const broadcastToPlayers = (socket, clients, args) =>{
         util.error(error);
     }
 };
+// ===============================================
+// warn  [reason]
+// ===============================================
+const warnPlayer = (socket, clients, args) =>{
+    try {
+        if (socket.player != null && args.length >= 2) {
+            let isMember = isUserMember(socket.role);
+
+            if (isMember) {
+                let a, rest;
+               let clients = sockets.getClients();
+                // a is the command "/broadcast" (args[0]).
+                // ...rest is the rest of arguments (args[1] to args[n-1]).
+                [a, ...rest] = args;
+
+                // Construct message from the rest of the args which is an array.
+                let msg = rest.reduce((accumulator, currentValue) => {
+                    return (accumulator + ' ' + currentValue);
+                }, '');
+
+                let msgAnnounce = '[Announcement]: ' + msg;
+              
+            }
+        }
+    }
+    catch (error){
+        util.error(error);
+    }
+};
+
 
 // ===============================================
 // pwd  [password]
@@ -801,6 +831,7 @@ const kickPlayer = (socket, clients, args) =>{
     }
 };
 //===============================
+
 //===============================
 const killPlayer = (socket, clients, args) =>{
     try {
