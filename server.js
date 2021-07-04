@@ -1456,8 +1456,8 @@ const banPlayer = (socket, clients, args, playerId) =>{
                             matches[0].player.name + ' [' + matches[0].ipAddress + '] ***');
                     }
 
-         //           break;
-           //     }
+                    break;
+                }
             }
         }
         } else {/*socket.player.body.sendMessage('usage: /mute [id]') */}
