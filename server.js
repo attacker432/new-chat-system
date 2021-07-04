@@ -1246,7 +1246,7 @@ const helplist = (socket, clients, args) => {
     try {
       
         socket.player.body.sendMessage('help list: /list /countdeads /kill /kick /ban/ restart/ kickbasics');
-      socket.player.body.sendMessage('page 2: /logout /countplayers /kickdead /pwd [password] /countall');
+      socket.player.body.sendMessage('page 2: /logout /countplayers /kickdead /pwd [password] /countall /mapsize [size]');
         socket.player.body.sendMessage('page 3: /aioff /aion /regenoff /regenon /recoiloff /recoilon /botcount [count]');
       socket.player.body.sendMessage('page 4: /killname [name] /addtoken [token] /removetoken [token] /define [class] /color [color: number]');
     }
