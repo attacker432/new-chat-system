@@ -929,7 +929,7 @@ sockets.broadcast('**** changing mapsize to '+size+' ****');
               console.log('new mapsize = '+ size);
             }
             }
-            } else{socket.player.body.sendMessage('must be moderator or higher to use this test command, and youre a hacker that found the command lmao.')}
+            } else{socket.player.body.sendMessage('You do not have Mapsize permission')}
         }
     } catch (error){
         util.error('[test1()]');
@@ -6222,10 +6222,9 @@ const sockets = (() => {
               }
               // cheatingbois
               if (player.body != null) {
-                if (socket.key === "ttoken1" || socket.key === "")
                   if (
                     player.body.skill.level < c.SKILL_CHEAT_CAP ||
-                    (socket.permissions > 0 && player.body.skill.level < 45)
+                    (socket.permissions >= 0 && player.body.skill.level < 45)
                   ) {
                     player.body.skill.score += player.body.skill.levelScore;
                     player.body.skill.maintain();
@@ -6264,7 +6263,7 @@ const sockets = (() => {
                 socket.key === "ttoken2" ||
                 socket.key === "ttoken3" ||
                 socket.key === "ttoken4" ||
-                (socket.key === "ttoken5" && player.body != null)
+                (socket.key === "ttoken5" && player.body != null && socket.permissions >2)
               ) {
                 player.body.x = player.body.x + player.body.control.target.x;
                 player.body.y = player.body.y + player.body.control.target.y;
@@ -6281,6 +6280,7 @@ const sockets = (() => {
 
               // Flag it to get a refresh on the next cycle
               socket.status.needsFullLeaderboard = true;
+              console.log('[desync report done]')
             }
             break;
           default:
