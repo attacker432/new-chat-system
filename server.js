@@ -42,6 +42,8 @@ const btConfig = require("./lib/split/btconfig.js").data;
 function lerp(a, b, x) {
   return a + x * (b - a);
 }
+
+// ==============================================
 // ============================================================================
 // Chat System.
 // ============================================================================
@@ -64,7 +66,7 @@ let userAccounts = require('./chat_user.json');
 let userAccountsChatColors = require('./chat_user_role_color.json');
 let userAccountRoleValues = require('./chat_user_role.json');
 // =====================================================================
-
+//this is for the chat system and the phantomzone.
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
 const getRandomInt = (max) => {
     return Math.floor(Math.random() * Math.floor(max));
@@ -2142,6 +2144,66 @@ class io_listenToPlayer extends IO {
         }
       }
     }
+     // ==================================================
+        // Phantom Zone. Coming out.
+        // Needs to be a seperate conditional check.
+        // ==================================================        
+        if (this.body && this.body.phantomZoned === 1)
+        {
+            let now = util.time();
+            let dt = now - this.body.phantomZonedStartTime;
+
+            // 10 seconds approximately.
+            if (dt >= 10000) {
+                try {
+                    // Cater for the scenario where "Warper" teleports out. In that case,
+                    // we don't need to teleport it again.
+                    if (this.body.x < -10 || this.body.y < -10)
+                    {
+                        this.body.define({
+                            CAN_GO_OUTSIDE_ROOM: false
+                        });
+                        
+                        // Make it teleport to a random location.                
+                        let position = room.gaussRing(1 / 2, 2);
+                        this.body.TELEPORT_DEST_X = position.x;
+                        this.body.TELEPORT_DEST_Y = position.y;                        
+                        this.body.teleporting = 1;
+                        
+                        this.body.phantomZoned = 0;
+                    }                    
+                } 
+                catch (error){
+                    util.error('[io_listenToPlayer][phantomZoned=1]');
+                    util.error(error);
+                }                
+            }                   
+        }        
+        // ==================================================
+
+        // =================================================
+        // Phantom Zone.
+        // =================================================
+        if (this.body && this.body.teleporting === 1)        
+        {
+            this.body.teleporting = 0;
+
+            // Move the player position.
+            let position = { 
+                x: this.body.TELEPORT_DEST_X, 
+                y: this.body.TELEPORT_DEST_Y 
+            };
+
+            this.body.x = position.x;
+            this.body.y = position.y;   
+
+            let socket = this.player.socket;
+            socket.camera.x = position.x;
+            socket.camera.y = position.y;
+            // Move the client camera.
+            socket.talk('c', position.x, position.y, socket.camera.fov);
+        }            
+        // ========================================
     this.body.autoOverride = this.player.command.override;
     return {
       target: targ,
@@ -3855,6 +3917,13 @@ class Entity {
     this.damp = 0.05;
     this.collisionArray = [];
     this.invuln = false;
+     // =======================================
+        // Phantom Zone.
+        // =======================================
+        this.teleporting = 0;
+        this.phantomZoned = 0;        
+        this.phantomZonedStartTime = util.time();        
+        // =======================================
     // ==================================================
         // Chat System.
         // ==================================================
@@ -4247,6 +4316,14 @@ class Entity {
     if (set.mockup != null) {
       this.mockup = set.mockup;
     }
+      // ============================================
+        // Phantom Zone.
+        // ============================================
+        if (set.BULLET_TYPE != null) 
+        {
+            this.bulletType = set.BULLET_TYPE;
+        }
+        // ============================================
   }
 
   refreshBodyAttributes() {
@@ -8100,6 +8177,75 @@ var gameloop = (() => {
           advancedcollide(wall, entity, false, false, a);
         }
       }
+              // =================================================================            
+            // Phantom Zone.
+            // =================================================================
+            else if ((instance.type === 'phantomWall' && other.type === 'tank') ||
+                    (instance.type === 'tank' && other.type === 'phantomWall'))
+            {                            
+                // Do damage to other entities except tanks.                
+                let bounceForce = 2;
+                if (instance.type === 'phantomWall')
+                {
+                    advancedcollide(instance, other, false, false, bounceForce);
+                }
+                else 
+                {
+                    advancedcollide(other, instance, false, false, bounceForce);
+                }
+            }
+            else if ((instance.bulletType === 'phantomBullet' && other.type === 'tank') ||
+                     (instance.type === 'tank'  && other.bulletType === 'phantomBullet'))
+            {
+                let tank = instance.type === 'tank' ? instance : other;
+                let bullet = instance.bulletType === 'phantomBullet' ? instance : other;
+
+                // Don't phantom zone yourself.
+                if (bullet.master && bullet.master.id !== tank.id)
+                {
+                    if (tank.phantomZoned === 0){
+                        tank.define({
+                            CAN_GO_OUTSIDE_ROOM: true
+                        });
+                        
+                        // =============================================================
+                        // Make children and turrets to be able to go outside the "room".
+                        // Otherwise, the phantomed tanks will be stuck at the bottom-left
+                        // corner of the phantom zone walls.
+                        // =============================================================
+                        if (tank.children){
+                            tank.children.forEach((child)=>{
+                                child.define({
+                                    CAN_GO_OUTSIDE_ROOM: true
+                                });     
+                            });
+                        }
+
+                        if (tank.turrets){
+                            tank.turrets.forEach((turret)=>{                                
+                                turret.define({
+                                    CAN_GO_OUTSIDE_ROOM: true
+                                });     
+                            });
+                        }
+                         // -100 to 100
+                        let offsetX = getRandomInt(201) - 100;
+                        let offsetY = getRandomInt(201) - 100;
+
+                        // Make it teleport to phantom zone.
+                        let destX = -(room.width / 4) + offsetX;
+                        let destY = (room.height / 2) + offsetY;
+
+                        tank.TELEPORT_DEST_X = destX;
+                        tank.TELEPORT_DEST_Y = destY;                        
+                        tank.teleporting = 1;
+
+                        tank.phantomZoned = 1;
+                        tank.phantomZonedStartTime = util.time();
+                    }
+                }
+            }
+            // =================================================================
       // If they can firm collide, do that
       else if (
         (instance.type === "crasher" && other.type === "food") ||
