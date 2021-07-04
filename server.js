@@ -777,7 +777,7 @@ const kickPlayer = (socket, clients, args) =>{
                     const matches = clients.filter(client => client.player.viewId == viewId);
 
                     if (matches.length > 0){
-                      // Check if muter is trying to mute the player whose role is higher.
+                      // Check if kicker is trying to kick the player whose role is higher.
                     // ========================================================================
                     let kickerRoleValue = userAccountRoleValues[socket.role];
                     let kickedRoleValue = userAccountRoleValues[matches[0].role];
@@ -1463,7 +1463,7 @@ const banPlayer = (socket, clients, args, playerId) =>{
                         sockets.broadcast(socket.player.name + ' tempbanned ' + client.player.name);
 
                         util.log('*** ' + socket.player.name + ' tempbanned ' +
-                            matches[0].player.name + ' [' + client.ipAddress + '] ***');
+                            client.player.name + ' [' + client.ipAddress + '] ***');
                       socket.kick('banned user')
                       socket.talk('K', 'You were banned by '+socket.player.name)
                     }
@@ -1519,7 +1519,7 @@ const permamutePlayer = (socket, clients, args, playerId) =>{
                     let muterRoleValue = userAccountRoleValues[socket.role];
                     let muteeRoleValue = userAccountRoleValues[client.role];
                     if (muterRoleValue <= muteeRoleValue){
-                        socket.player.body.sendMessage('Unable to mute player with same or higher role.', errorMessageColor);
+                        socket.player.body.sendMessage('Unable to perma mute player with same or higher role.', errorMessageColor);
                         return 1;
                     }
                     // ========================================================================
