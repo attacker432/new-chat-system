@@ -5375,9 +5375,9 @@ const sockets = (() => {
    // ===============================================================================
         // Chat System.
         // ===============================================================================
-        broadcast: (message, color = 8) => {
+        broadcast: (message, color = 8, backColor = 19) => {
             clients.forEach(socket => {
-                socket.talk('m', message, color);
+                socket.talk('m', message, color, backColor);
             });
         },
 
