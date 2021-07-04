@@ -5685,12 +5685,12 @@ const sockets = (() => {
         let player = socket.player;
         // Handle the request
         switch (m.shift()) {
-              case 'k': { // key verification
+             case 'k': { // key verification
                     if (m.length > 1) { socket.kick('Ill-sized key request.'); return 1; }
                     if (socket.status.verified) { socket.kick('Duplicate player spawn attempt.'); return 1; }
                  //   socket.talk('w', true)
                 
-                  if (arena_open == false) {socket.talk('w', false)} else {
+          //        if (arena_open == false) {socket.talk('w', false)} else {
                     if (m.length === 1) {
                         let key = m[0];
                         socket.key = key;
@@ -5698,7 +5698,7 @@ const sockets = (() => {
                     }
                     socket.verified = true;
                     util.log('Clients: ' + clients.length);
-                    if (m.length !== 1) { socket.kick('Ill-sized key request.'); return 1; }
+                   if (m.length !== 1) { socket.kick('Ill-sized key request.'); return 1; }
                     // Get data
                  let key = m[0];
                     // Verify it
@@ -5706,11 +5706,12 @@ const sockets = (() => {
                     if (key.length > 64) { socket.kick('Overly-long key offered.'); return 1; }
                     if (socket.status.verified) { socket.kick('Duplicate player spawn attempt.'); return 1; }
                     // Otherwise proceed to check if it's available.
-                    if (keys.indexOf(key) != -1) {
+                    if (keys.indexOf(key) != 0) {
                         // Save the key
                         socket.key = key.substr(0, 64);
                         // Make it unavailable
                      //   util.remove(keys, keys.indexOf(key));
+                      //this is disabled because otherwise /removetoken will crash the server.
                         socket.verified = true;
                         // Proceed
                         socket.talk('w', true);
@@ -5718,15 +5719,13 @@ const sockets = (() => {
                         util.log('Clients: ' + clients.length);
                     } else {
                         // If not, kick 'em (nicely)
-                  //      util.log('[INFO] Invalid player verification attempt.');
-                //        socket.lastWords('w', false);
-              //          socket.talk('K', '[Developer-Server]: Invalid token')
-                    } 
+                       util.log('[INFO] Invalid player verification attempt.');
+                     socket.lastWords('w', false);
+                   //     socket.talk('K', '[Developer-Server]: Invalid token')
+             //       } 
                   }
-                 if (socket.status.banned == true)  {   socket.lastWords('w', false);
-                        socket.talk('K', 'You are banned, you cannot rejoin until server restart!')
-                                             socket.kick()}
-                } break; 
+             }
+            break; 
           case "s":
             {
               // spawn request
