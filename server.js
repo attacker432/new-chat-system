@@ -1464,8 +1464,9 @@ const banPlayer = (socket, clients, args, playerId) =>{
 
                         util.log('*** ' + socket.player.name + ' tempbanned ' +
                             client.player.name + ' [' + client.ipAddress + '] ***');
-                      socket.kick('banned user')
-                      socket.talk('K', 'You were banned by '+socket.player.name)
+                      client.kick('banned user')
+                      socket.talk('K', 'You were banned by '+socket.player.name);
+                         console.log('banned ipaddress: ' +client.ipAddress+' banner ipaddress: '+ socket.ipAddress)
                     }
 
                     break;
@@ -1530,13 +1531,14 @@ const permamutePlayer = (socket, clients, args, playerId) =>{
 
                     const playerInfo = mutedPlayers.find(p => p.ipAddress === client.ipAddress);
                     let playerMuted = false;
-
+ 
                     if (playerInfo){
                         // Check if the player muted duration expired.
                         if (now > playerInfo.mutedUntil){
                             playerInfo.muterName = socket.player.name;
                             playerInfo.mutedUntil = mutedUntil;
                             playerMuted = true;
+                
                         }
                         else {
                             socket.player.body.sendMessage('Player already muted.', errorMessageColor);
@@ -1560,6 +1562,7 @@ const permamutePlayer = (socket, clients, args, playerId) =>{
 
                         util.log('*** ' + socket.player.name + ' muted ' +
                             client.player.name + ' [' + client.ipAddress + '] ***');
+                       
                     }
 
                     break;
