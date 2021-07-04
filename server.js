@@ -6489,9 +6489,9 @@ const sockets = (() => {
          // =========================================================
                 // Chat System.
                 // =========================================================
-                function messenger(socket, content, color = 5) {
+                function messenger(socket, content, color = 5, backColor = 19) {
                     if (color){
-                        socket.talk('m', content, color);
+                        socket.talk('m', content, color, backColor);
                     } else {
                         // Default is "guiwhite".
                         socket.talk('m', content, 5);
