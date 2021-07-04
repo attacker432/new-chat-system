@@ -914,7 +914,7 @@ class Canvas {
                         for (var i = 0; i < players.length; i+=2) {
                             var option = document.createElement("option");
                             option.value = players[i];
-                            option.text = players[i+1];
+                            option.text = players[i+1, players.viewId];
                             playersDropDownList.appendChild(option);
                         }
 

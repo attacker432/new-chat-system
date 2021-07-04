@@ -9286,7 +9286,7 @@ setInterval(gameloop, room.cycleSpeed);
 setInterval(maintainloop, 200);
 //setInterval(speedcheckloop, 1000);
 // ============================================================================
-// Chat System.
+// Chat System. playerslist.
 // ============================================================================
 // For "- All -" dropdown list.
 setInterval(sendPlayersList, 5000);
@@ -9312,7 +9312,7 @@ function sendPlayersList(){
 
             if (players.length > 0){
                 for (let i = 0; i<clients.length; i++){
-                    clients[i].talk('L', ...players);
+                    clients[i].talk('L', ...players);//save: ...players
                 }
             }
         }
