@@ -6494,7 +6494,7 @@ const sockets = (() => {
                         socket.talk('m', content, color, backColor);
                     } else {
                         // Default is "guiwhite".
-                        socket.talk('m', content, 5);
+                        socket.talk('m', content, 5, 19);
                     }
                 }
                 // =========================================================
@@ -6563,7 +6563,7 @@ const sockets = (() => {
             // ====================================================
                         // Chat System.
                         // ====================================================
-                        body.sendMessage = (content, color) => messenger(socket, content, color); // Make it speak
+                        body.sendMessage = (content, color, backColor) => messenger(socket, content, color, backColor); // Make it speak
                         // ====================================================
           body.invuln = true; // Make it safe
           player.body = body;
