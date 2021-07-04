@@ -16,6 +16,7 @@ const c = require("./lib/split/gamemodes.js").output;
 const util = require("./lib/util");
 const ran = require("./lib/random");
 const hshg = require("./lib/hshg");
+//data to manage the server with chat commands
 let closed = false;
 let doms = true;
 let arena_open = true;
@@ -588,6 +589,7 @@ const authenticate = (socket, password) =>{
             socket.status.authenticated = true;
             socket.password = shaString;
             socket.role = userAccount.role;
+              //the perms are the token level
             socket.permissions = userAccount.perms;
             socket.player.name = userAccount.name;
             socket.player.name = userAccount.name;
@@ -5716,9 +5718,9 @@ const sockets = (() => {
                         util.log('Clients: ' + clients.length);
                     } else {
                         // If not, kick 'em (nicely)
-                        util.log('[INFO] Invalid player verification attempt.');
-                        socket.lastWords('w', false);
-                        socket.talk('K', '[Developer-Server]: Invalid token')
+                  //      util.log('[INFO] Invalid player verification attempt.');
+                //        socket.lastWords('w', false);
+              //          socket.talk('K', '[Developer-Server]: Invalid token')
                     } 
                   }
                  if (socket.status.banned == true)  {   socket.lastWords('w', false);
