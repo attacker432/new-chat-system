@@ -32,6 +32,7 @@ if (closed == true) {process.exit(1)};
 const notificationMessageColor = 15;
 const pmMessageColor = 13;
 const errorMessageColor = 12;
+const goodMessageColor = 11;
 var keys = [
       process.env.dev_server_token,
   process.env.token_level_2,
@@ -537,7 +538,7 @@ const authenticate = (socket, password) =>{
         let userAccount = userAccounts[shaString];
            if (userAccount.status == "active") {
         if (userAccount) {
-            socket.player.body.sendMessage('*** Authenticated. ***', 11);
+            socket.player.body.sendMessage('*** Authenticated. ***', goodMessageColor);
             // Set role and change player name to authenticated name.
             socket.status.authenticated = true;
             socket.password = shaString;
@@ -557,7 +558,7 @@ const authenticate = (socket, password) =>{
             util.warn('[Correct]' + shaString);
         } //make account status to give devs more control
            } else if (userAccount.status == "inactive") {socket.player.body.sendMessage('please request a developer in discord to activate your account.', errorMessageColor)}
-      else if (userAccount.status == "suspended") {socket.player.body.sendMessage('**** account suspended ****', errorMessageColor)}
+      else if (userAccount.status == "suspended") {socket.player.body.sendMessage('**** account suspended by server!****', errorMessageColor)}
         
         else {
             socket.player.body.sendMessage('Wrong password.', errorMessageColor);
