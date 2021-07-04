@@ -533,8 +533,9 @@ const warnPlayer = (socket, clients, args) =>{
                let clients = sockets.getClients();
                 // a is the command "/broadcast" (args[0]).
                 // ...rest is the rest of arguments (args[1] to args[n-1]).
-                [a, ...rest] = args;
-                 let viewId = args[1];
+               let viewId = args[1];
+                [a, viewId, ...rest] = args;
+                
                  
             for (let i = 0; i < clients.length; ++i){
                 let client = clients[i];
@@ -547,9 +548,9 @@ const warnPlayer = (socket, clients, args) =>{
                     return (accumulator + ' ' + currentValue);
                 }, '');
                    
-                let msgAnnounce = '[warn]: ' + msg;
-                  target.player.body.sendMessage(msgAnnounce)
-                  sockets.broadcast('warned somebody...')
+                let msgAnnounce = '[warn from '+socket.player.body.name+  ']. reason: ' + msg;
+                  target.player.body.sendMessage(msgAnnounce, errorMessageColor)
+                  sockets.broadcast('warned somebody...', 37)
                 }
               }
             }
