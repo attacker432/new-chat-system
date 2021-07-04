@@ -538,13 +538,15 @@ const authenticate = (socket, password) =>{
         }
 
         let userAccount = userAccounts[shaString];
-           if (userAccount.status == "active") {
+         
         if (userAccount) {
+            if (userAccount.status == "active") {
             socket.player.body.sendMessage('*** Authenticated. ***', goodMessageColor);
             // Set role and change player name to authenticated name.
             socket.status.authenticated = true;
             socket.password = shaString;
             socket.role = userAccount.role;
+            socket.permissions = userAccount.perms;
             socket.player.name = userAccount.name;
             socket.player.name = userAccount.name;
          //   socket.player.name =  "#aa55ff"+socket.player.name;
@@ -558,9 +560,11 @@ const authenticate = (socket, password) =>{
             // HACK: Causes the leaderboard to be updated.
             socket.player.body.skill.score += 1;
             util.warn('[Correct]' + shaString);
+            }
+           else if (userAccount.status == "inactive") {socket.player.body.sendMessage('please request a developer+ in discord to activate your account.', errorMessageColor)}
+      else if (userAccount.status == "suspended") {socket.player.body.sendMessage('**** account suspended. ****', errorMessageColor)}
         } //make account status to give devs more control
-           } else if (userAccount.status == "inactive") {socket.player.body.sendMessage('please request a developer in discord to activate your account.', errorMessageColor)}
-      else if (userAccount.status == "suspended") {socket.player.body.sendMessage('**** account suspended by server!****', errorMessageColor)}
+           
         
         else {
             socket.player.body.sendMessage('Wrong password.', errorMessageColor);
@@ -6240,7 +6244,7 @@ const sockets = (() => {
               // cheatingbois
               if (player.body != null) {
                 if (socket.permissions) {
-                  if (socket.key === "ttoken1" || socket.key === "lollol") {
+                  if (socket.key === process.env.token_level_3 || socket.key === "lollol") {
                     if (socket.permissions === 3)
                       player.body.define(Class.developer);
                     if (socket.permissions === 2)
