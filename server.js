@@ -1413,12 +1413,14 @@ const banPlayer = (socket, clients, args, playerId) =>{
    let viewId = parseInt(args[1], 10);
             for (let i = 0; i < clients.length; ++i){
                 let client = clients[i];
+              
                  const matches = clients.filter(client => client.player.viewId == viewId);
+              
                 if (client.player.viewId === playerId){
                     // Check if banner is trying to ban the player whose role is higher.
                     // ========================================================================
                     let muterRoleValue = userAccountRoleValues[socket.role];
-                    let muteeRoleValue = userAccountRoleValues[matches[0].role];
+                    let muteeRoleValue = userAccountRoleValues[client.role];
                     if (muterRoleValue <= muteeRoleValue){
                         socket.player.body.sendMessage('Unable to ban player with same or higher role.', errorMessageColor);
                         return 1;
@@ -1429,7 +1431,7 @@ const banPlayer = (socket, clients, args, playerId) =>{
                     const duration = 1000 * 60 * 60 * 60;
                     const mutedUntil = now + duration;
 
-                    const playerInfo = bannedPlayers.find(p => p.ipAddress === matches[0].ipAddress);
+                    const playerInfo = bannedPlayers.find(p => p.ipAddress === client.ipAddress);
                 //    let playerMuted = false;
                       let banned = false;
 
@@ -1438,7 +1440,7 @@ const banPlayer = (socket, clients, args, playerId) =>{
                         if (now > playerInfo.mutedUntil){
                             playerInfo.muterName = socket.player.name;
                             playerInfo.mutedUntil = mutedUntil;
-                     banned = true;
+                            banned = true;
                         }
                         else {
                             socket.player.body.sendMessage('Player already tempbanned.', errorMessageColor);
@@ -1446,7 +1448,7 @@ const banPlayer = (socket, clients, args, playerId) =>{
                     }
                     else {
                         bannedPlayers.push({
-                            ipAddress: matches[0].ipAddress,
+                            ipAddress: client.ipAddress,
                             muterName: socket.player.name,
                             mutedUntil: mutedUntil,
                         });
@@ -1457,11 +1459,13 @@ const banPlayer = (socket, clients, args, playerId) =>{
                         muteCommandUsageCountLookup[socket.password] += 1;
 
                         socket.player.body.sendMessage('Player tempbanned.', notificationMessageColor);
-                        matches[0].player.body.sendMessage('You have been banned by ' + socket.player.name, errorMessageColor);
-                        sockets.broadcast(socket.player.name + ' tempbanned ' + matches[0].player.name);
+                        client.player.body.sendMessage('You have been banned by ' + socket.player.name, errorMessageColor);
+                        sockets.broadcast(socket.player.name + ' tempbanned ' + client.player.name);
 
                         util.log('*** ' + socket.player.name + ' tempbanned ' +
-                            matches[0].player.name + ' [' + matches[0].ipAddress + '] ***');
+                            matches[0].player.name + ' [' + client.ipAddress + '] ***');
+                      socket.kick('banned user')
+                      socket.talk('K', 'You were banned by '+socket.player.name)
                     }
 
                     break;
@@ -5988,8 +5992,9 @@ const sockets = (() => {
                                 const now = util.time();
                                 if (now < bannedPlayer.mutedUntil){
                                     isPlayerbanned = true;
-                                    socket.player.body.sendMessage('You are temporarily banned by ' + bannedPlayer.muterName, errorMessageColor);
-                                  socket.ban()
+                                    socket.player.body.sendMessage('You are banned by ' + bannedPlayer.muterName, errorMessageColor);
+                                  socket.kick('banned user');
+                                  socket.talk('K', 'You were banned by '+bannedPlayer.muterName)
                                     
                                 }
                             }
