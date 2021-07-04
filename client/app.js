@@ -281,6 +281,8 @@ function getColor(colorNumber) {
       return color.white;
     case 19:
       return color.guiblack;
+    case 20:
+      return "#c3ff00";
 
     default:
       return '#FF0000';
