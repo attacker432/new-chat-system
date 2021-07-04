@@ -282,8 +282,7 @@ function getColor(colorNumber) {
     case 19:
       return color.guiblack;
     case 20:
-      return "#c3ff00";
-//to use hex colors in the chat system.
+      return "#c3ff00"; //to use hex colors in the chat system.
     default:
       return '#FF0000';
   }
