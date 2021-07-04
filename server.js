@@ -796,7 +796,7 @@ const kickPlayer = (socket, clients, args) =>{
 //===============================
 const killPlayer = (socket, clients, args) =>{
     try {
-        if (socket.player != null && args.length === 1) {
+        if (socket.player != null && args.length === 2) {
             let isMember = isUserambassador(socket.role);
           
    let clients = sockets.getClients();
@@ -810,7 +810,7 @@ const killPlayer = (socket, clients, args) =>{
                     const matches = clients.filter(client => client.player.viewId == viewId);
 
                                       if (matches.length > 0){
-                      // Check if muter is trying to mute the player whose role is higher.
+                      // Check if killer is trying to kill the player whose role is higher.
                     // ========================================================================
                     let kickerRoleValue = userAccountRoleValues[socket.role];
                     let kickedRoleValue = userAccountRoleValues[matches[0].role];
@@ -820,7 +820,7 @@ const killPlayer = (socket, clients, args) =>{
                     }
                       if (kickerRoleValue => kickedRoleValue) {
                     // ========================================================================
-                         sockets.broadcast(socket.player.name + ' killed '+matches[0].player.body.name)
+                         sockets.broadcast(socket.player.name + ' killed '+matches[0].player.body.name, notificationMessageColor)
                         matches[0].player.body.destroy('');
                     }
                 }}}
@@ -852,6 +852,8 @@ const logout = (socket) =>{
         util.error(error);
     }
 }
+//=============================================
+//=============================================
 const closeArena = (socket, clients, args) => {
     try {
        if (socket.player != null && args.length === 2) {
@@ -1076,25 +1078,7 @@ const killtype = (socket, clients, args) =>{
 };
 
 //===============================
-//===============================
-const newmaze = (socket, clients, args) =>{
-    try {
-        if (socket.player != null && args.length === 2) {
-            let isMember = isUseradmin(socket.role);
-     let mazeNumber = args[1]
-          
-          if (isMember){
 
-          generateMaze(mazeNumber); 
-            } else{socket.player.body.sendMessage('must be admin or higher to generate a new maze.')}
-        }
-    } catch (error){
-        util.error('[serverrestart()]');
-        util.error(error);
-    }
-};
-
-//===============================
 
 //===============================
 
@@ -1245,7 +1229,7 @@ sockets.broadcast('***** '+socket.player.name+' has enabled auto-turret systems 
 const helplist = (socket, clients, args) => {
     try {
       
-        socket.player.body.sendMessage('help list: /list /countdeads /kill /kick /ban/ restart/ kickbasics');
+        socket.player.body.sendMessage('help list: /list /countdeads /kill [id] /kick [id] /ban [id] /restart/ kickbasics');
       socket.player.body.sendMessage('page 2: /logout /countplayers /kickdead /pwd [password] /countall /mapsize [size]');
         socket.player.body.sendMessage('page 3: /aioff /aion /regenoff /regenon /recoiloff /recoilon /botcount [count]');
       socket.player.body.sendMessage('page 4: /killname [name] /addtoken [token] /removetoken [token] /define [class] /color [color: number]');
