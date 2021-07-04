@@ -8446,6 +8446,45 @@ var maintainloop = (() => {
     util.log("Placing " + count + " obstacles!");
   }
   placeRoids();
+     // =========================================================
+    // MODIFIED: Phantom Zone walls Generator.
+    // =========================================================
+    const PhantomZoneGenerator = class {       
+        generate() {            
+            let scale = 70;
+            let count = 0;
+            let startX = -(room.width / 3);
+            let startY = (room.height * 2/5);
+            let numWallsAcross = 10;
+            let numWallsDown = 10;
+
+            for (let x = 0; x < numWallsAcross; x++)
+            {
+                for (let y = 0; y < numWallsDown; y++)
+                {
+                    if (x === 0 || y === 0 || x === (numWallsAcross - 1) || y === (numWallsDown - 1)){
+                        let wall = new Entity(
+                            {
+                                x: startX + (x + 0.3) * scale,
+                                y: startY + (y + 0.2) * scale
+                            });
+                            wall.define(Class.phantomZoneWall);                
+                            wall.SIZE = 0.7 * scale;
+                            wall.team = -101;                
+                            wall.protect();
+                            wall.life();
+                            count++;
+                    }                
+                }
+            }
+                    
+            util.log('*** Placed ' + count + ' phantom zone walls. ***');
+            return this;
+        }
+    };
+
+    new PhantomZoneGenerator().generate();
+    // =========================================================
   function generateMaze(size) {
     let maze = JSON.parse(
       JSON.stringify(Array(size).fill(Array(size).fill(true)))

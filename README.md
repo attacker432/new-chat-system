@@ -13,3 +13,7 @@
 -client + server in one project
 -token system with token verification to enter the game-server
 -godmode on/off
+
+
+
+### note: phantom zone is currently not in use because its bugged.
