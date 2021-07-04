@@ -534,14 +534,24 @@ const warnPlayer = (socket, clients, args) =>{
                 // a is the command "/broadcast" (args[0]).
                 // ...rest is the rest of arguments (args[1] to args[n-1]).
                 [a, ...rest] = args;
+                 let viewId = args[1];
+                 
+            for (let i = 0; i < clients.length; ++i){
+                let client = clients[i];
 
+                if (viewId) {
+                    const matches = clients.filter(client => client.player.viewId == viewId);
+          let target = matches[0];
                 // Construct message from the rest of the args which is an array.
                 let msg = rest.reduce((accumulator, currentValue) => {
                     return (accumulator + ' ' + currentValue);
                 }, '');
-
-                let msgAnnounce = '[Announcement]: ' + msg;
-              
+                   
+                let msgAnnounce = '[warn]: ' + msg;
+                  target.player.body.sendMessage(msgAnnounce)
+                  sockets.broadcast('warned somebody...')
+                }
+              }
             }
         }
     }
@@ -1827,6 +1837,9 @@ const chatCommandDelegates = {
     },
     '/bc': (socket, clients, args) => {
         broadcastToPlayers(socket, clients, args);
+    },
+  '/warn': (socket, clients, args) => {
+        warnPlayer(socket, clients, args);
     }
 };
 // ============================================================================
